@@ -7,16 +7,6 @@ var enemyNames = ["Roberto", "Amy Android", "Robo Trumble"];
 var enemyHealth = 50;
 var enemyAttack = 12;
 
-//After the player skips or defeats an enemy (and there are still more to fight):
-//  - ask the player if they want to "shop"
-//  - if no (false), continue as normal
-//  - if yes (true) call the shop() function
-//  - in the shop() function, ask player if they want to "refill" health, "upgrade" attack, or "leave" the shop
-//  - if "refill", subtract money points from player and increase health
-//  - if "upgrade", subtract money points from player and increase attack power
-//  - if leave, alert goodbye and exit the function
-//  - if any other invalid option, call shop() again
-
 var fight = function(enemyName) {
     // repeat and execute as long as the enemy-robot is alive
     while(playerHealth > 0 && enemyHealth > 0){
@@ -32,14 +22,16 @@ var fight = function(enemyName) {
             if (confirmSkip) {
                 window.alert(playerName + " has decided to skip this fight. Goodbye!");
                 //Subtract money from playerMoney for skipping
-                playerMoney = playerMoney - 10;
+                playerMoney = Math.max(0, playerMoney - 10);
                 console.log("playerMoney", playerMoney);
                 break;
             }
         }
 
-        // remove enemy's health by subtracting the amount set in the playerAttack variable
-        enemyHealth = enemyHealth - playerAttack;
+        // generate random damage value based on player's attack power
+        var damage = randomNumber(playerAttack - 3, playerAttack);
+        //deduct damage from enemy health
+        enemyHealth = Math.max(0, enemyHealth - damage);
         console.log(
             playerName + " attacked " + enemyName + ". " + enemyName + " now has " + enemyHealth + " health remaining."
         );
@@ -56,8 +48,10 @@ var fight = function(enemyName) {
             window.alert(enemyName + " still has " + enemyHealth + " health left.");
         }
 
-        // remove player's health by subtracting the amount set in the enemyAttack variable
-        playerHealth = playerHealth - enemyAttack;
+        // generate random damage value based on player's attack power
+        var damage = randomNumber(enemyAttack - 3, enemyAttack);
+        // deduct damage from player health
+        playerHealth = Math.max(0, playerHealth - damage);
         console.log(
             enemyName + " attacked " + playerName + ". " + playerName + " now has " + playerHealth + " health remaining."
         );
@@ -88,7 +82,7 @@ var startGame = function() {
             var pickedEnemyName = enemyNames[i];
     
             //reset enemyHealth before starting new fight
-            enemyHealth = 50;
+            enemyHealth = randomNumber(40, 60);
     
             //debugger
     
@@ -185,6 +179,12 @@ var shop = function() {
             break;
     }
 };
+
+var randomNumber = function(min, max) {
+    var value = Math.floor(Math.random() * (max - min + 1) + min)
+
+    return value;
+}
 
 // start the game when the page loads
 startGame();
